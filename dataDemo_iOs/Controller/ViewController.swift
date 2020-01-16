@@ -55,7 +55,17 @@ class ViewController: UIViewController {
         
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let BookTable = segue.destination as? BookTableVC
+        {
+            BookTable.books = self.books
+        }
+    }
     
+    func saveData()
+    {
+        
+    }
     
 }
 
