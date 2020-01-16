@@ -18,6 +18,8 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         loadData()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(saveData), name: UIApplication.willResignActiveNotification, object: nil)
     }
     
     func getFilePath() -> String
@@ -34,7 +36,29 @@ class ViewController: UIViewController {
     
     func loadData()
     {
+        let filepath = getFilePath()
         books=[Book]()
+        if FileManager.default.fileExists(atPath: filepath)
+        {
+            do{
+               //extract data
+                let fileContent = try String(contentsOfFile: filepath)
+                let contentArray = fileContent.components(separatedBy: "\n")
+                for content in contentArray
+                {
+                    let bookContent = content.components(separatedBy: ",")
+                    if bookContent.count == 4
+                    {
+                        let book = Book(title: bookContent[0], author: bookContent[1], pages: Int(bookContent[2])!, year: Int(bookContent[3])!)
+                        books?.append(book)
+                    }
+                }
+            }
+            catch
+            {
+                print(KEVENT_FLAG_ERROR_EVENTS)
+            }
+        }
     }
 
     @IBAction func addBook(_ sender: UIBarButtonItem)
@@ -62,9 +86,23 @@ class ViewController: UIViewController {
         }
     }
     
-    func saveData()
+   @objc func saveData()
     {
+        let filePath = getFilePath()
+        var saveString = ""
+        for book in books!
+        {
+            saveString = "\(saveString)\(book.title),\(book.author),\(book.pages),\(book.year)\n"
+        }
         
+        //write to path
+        do{
+            try saveString.write(toFile: filePath, atomically: true, encoding: .utf8)
+        }
+        catch
+        {
+            print(error)
+        }
     }
     
 }
