@@ -47,9 +47,15 @@ class ViewController: UIViewController {
         let book = Book(title: title, author: author, pages: pages, year: year)
         books?.append(book)
         
-        for
+        for textField in textFields
+        {
+            textField.text=""
+            textField.resignFirstResponder()
+        }
         
     }
+    
+    
     
 }
 
